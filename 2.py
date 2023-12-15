@@ -30,7 +30,6 @@ import re
 
 possible_game_ids = []
 game_data = {}
-temp_game_data = {}
 red_cube_limit = 12
 green_cube_limit = 13
 blue_cube_limit = 14
@@ -45,29 +44,14 @@ def parse_game_info(data):
     game_id = int(match.group(1))
 
     # extract cubes
+    cubes_per_color = {}
     color_matches = re.findall(r"(\d+) (\w+)", data)
     for count, color in color_matches:
-        if game_data:
-            for key, value in game_data.items():
-                if game_id not in game_data:
-                    color_data = {
-                        color: int(count)
-                    }
-                    temp_game_data[game_id] = color_data
-                if color in value:
-                    temp_game_data[game_id][color] += int(count)
-                else:
-                    new_data = {
-                        color: int(count)
-                    }
-                    temp_game_data[game_id].update(new_data)
-        else:
-            temp_game_data[game_id] = {
-            color: int(count)
-            }
-    game_data.update(temp_game_data)
+        cubes_per_color[color] = cubes_per_color.get(color, 0) + int(count)
+    return cubes_per_color, game_id
 
-def is_possible():
+def is_possible(cube_data, game_id):
+    cube_data, game_id =
     for game_id in game_data:
         red_cube = int(game_data[game_id]['red'])
         green_cube = int(game_data[game_id]['green'])
@@ -76,6 +60,5 @@ def is_possible():
         possible_game_ids.append(game_id)
 with open('2.input', 'r', newline='\n') as input_file:
     for line in input_file:
-        parsed = parse_game_info(line)
-is_possible()
-print(possible_game_ids)
+        cube_data, game_id = parse_game_info(line)
+        is_possible(cube_data, game_id)
