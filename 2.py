@@ -25,3 +25,57 @@ In the example above, games 1, 2, and 5 would have been possible if the bag had 
 
 Determine which games would have been possible if the bag had been loaded with only 12 red cubes, 13 green cubes, and 14 blue cubes. What is the sum of the IDs of those games?
 """
+
+import re
+
+possible_game_ids = []
+game_data = {}
+temp_game_data = {}
+red_cube_limit = 12
+green_cube_limit = 13
+blue_cube_limit = 14
+
+def parse_game_info(data):
+    red_cube = 0
+    green_cube = 0
+    blue_cube = 0
+
+    # extract game ID
+    match = re.match(r"Game (\d+):", data)
+    game_id = int(match.group(1))
+
+    # extract cubes
+    color_matches = re.findall(r"(\d+) (\w+)", data)
+    for count, color in color_matches:
+        if game_data:
+            for key, value in game_data.items():
+                if game_id not in game_data:
+                    color_data = {
+                        color: int(count)
+                    }
+                    temp_game_data[game_id] = color_data
+                if color in value:
+                    temp_game_data[game_id][color] += int(count)
+                else:
+                    new_data = {
+                        color: int(count)
+                    }
+                    temp_game_data[game_id].update(new_data)
+        else:
+            temp_game_data[game_id] = {
+            color: int(count)
+            }
+    game_data.update(temp_game_data)
+
+def is_possible():
+    for game_id in game_data:
+        red_cube = int(game_data[game_id]['red'])
+        green_cube = int(game_data[game_id]['green'])
+        blue_cube = int(game_data[game_id]['blue'])
+    if (red_cube <= red_cube_limit) and (green_cube <= green_cube_limit) and (blue_cube <= blue_cube_limit):
+        possible_game_ids.append(game_id)
+with open('2.input', 'r', newline='\n') as input_file:
+    for line in input_file:
+        parsed = parse_game_info(line)
+is_possible()
+print(possible_game_ids)
